@@ -1,0 +1,40 @@
+# docker-compose.yml
+services:
+  # PostgreSQL 数据库服务
+  db:
+    image: postgres:16-alpine
+    container_name: todo-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: todoapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js 应用服务
+  app:
+    build: .
+    container_name: todo-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      AUTH_SECRET: super-secret-key-change-in-production
+      DATABASE_URL: postgresql://postgres:mysecretpassword@db:5432/todoapp?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./prisma:/app/prisma  # 可选：挂载 prisma 目录用于迁移
+
+volumes:
+  postgres_data:

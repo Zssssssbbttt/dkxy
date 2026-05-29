@@ -35,7 +35,7 @@ export default function TodoPageClient({
     if (doneRes.ok) setDoneTodos(await doneRes.json());
     router.refresh();
   }, [router]);
-
+  
   async function handleLogout() {
     await signOut({ redirect: false });
     router.push("/login");
