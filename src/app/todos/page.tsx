@@ -29,6 +29,7 @@ export default async function TodosPage() {
     }),
   ]);
 
+
   return (
     <TodoPageClient
       initialPending={serialize(pendingTodos)}

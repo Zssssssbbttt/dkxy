@@ -24,10 +24,10 @@ export async function PUT(
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
-  const updated = await prisma.todo.update({
-    where: { id: params.id },
-    data: parsed.data,
-  });
+    const updated = await prisma.todo.update({
+      where: { id: params.id },
+      data: parsed.data,
+    });
   return NextResponse.json(updated);
 }
 
