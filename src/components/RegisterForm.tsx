@@ -1,11 +1,10 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,28 +15,31 @@ export default function LoginForm() {
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const res = await signIn("credentials", {
-      username: form.get("username") as string,
-      password: form.get("password") as string,
-      redirect: false,
+    const username = form.get("username") as string;
+    const password = form.get("password") as string;
+
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
 
     setLoading(false);
 
-    if (res?.error) {
-      setError("用户名或密码错误");
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || "注册失败");
       return;
     }
 
-    router.push("/todos");
-    router.refresh();
+    router.push("/login");
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          登录
+          注册
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -49,7 +51,6 @@ export default function LoginForm() {
               type="text"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="admin"
             />
           </div>
           <div>
@@ -60,8 +61,8 @@ export default function LoginForm() {
               name="password"
               type="password"
               required
+              minLength={6}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="admin123"
             />
           </div>
           {error && (
@@ -72,12 +73,12 @@ export default function LoginForm() {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? "登录中..." : "登录"}
+            {loading ? "注册中..." : "注册"}
           </button>
           <p className="text-center text-sm text-gray-600">
-            没有账号？
-            <Link href="/register" className="text-blue-600 hover:underline">
-              去注册
+            已有账号？
+            <Link href="/login" className="text-blue-600 hover:underline">
+              去登录
             </Link>
           </p>
         </form>
