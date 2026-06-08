@@ -1,9 +1,10 @@
 {
-  "spinnerTipsEnabled": false,
   "permissions": {
     "allow": [
       "Bash(npx tsc *)",
-      "Bash(echo \"Exit code: $?\")"
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(C:/Users/blfw/pgsql/pgsql/bin/psql.exe *)"
     ]
-  }
+  },
+  "spinnerTipsEnabled": false
 }

@@ -1,7 +1,9 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { prisma } from "./prisma";
+import { db } from "./drizzle";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,13 +15,13 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null;
-        const user = await prisma.user.findUnique({
-          where: { username: credentials.username },
+        const user = await db.query.users.findFirst({
+          where: eq(users.username, credentials.username),
         });
         if (!user) return null;
         const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
-        return { id: user.id, name: user.username };
+        return { id: String(user.id), name: user.username };
       },
     }),
   ],

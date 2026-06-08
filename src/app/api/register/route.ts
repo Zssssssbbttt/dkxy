@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import connectDB from "@/lib/mongoose";
-import { User } from "@/models";
+import { db } from "@/lib/drizzle";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -17,16 +18,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "密码长度不能少于6位" }, { status: 400 });
     }
 
-    await connectDB();
-
-    const existing = await User.findOne({ username });
+    const existing = await db.query.users.findFirst({
+      where: eq(users.username, username),
+    });
 
     if (existing) {
       return NextResponse.json({ error: "用户名已存在" }, { status: 409 });
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hashed });
+    await db.insert(users).values({ username, password: hashed });
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (e) {
