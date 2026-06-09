@@ -14,6 +14,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "密码", type: "password" },
       },
       async authorize(credentials) {
+        console.log('用户登录验证',credentials)
         if (!credentials?.username || !credentials?.password) return null;
         const user = await db.query.users.findFirst({
           where: eq(users.username, credentials.username),
