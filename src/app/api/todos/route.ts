@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
 import { todoCreateSchema } from "@/lib/validations";
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "未登录" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
   const status = searchParams.get("status");
 
-  const where: Record<string, unknown> = { userId: session.user.id };
+  const where: Record<string, unknown> = { userId };
   if (status === "pending") where.completed = false;
   if (status === "done") where.completed = true;
 
@@ -25,8 +24,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "未登录" }, { status: 401 });
   }
 
@@ -37,7 +36,7 @@ export async function POST(req: NextRequest) {
   }
 
   const todo = await prisma.todo.create({
-    data: { title: parsed.data.title, userId: session.user.id },
+    data: { title: parsed.data.title, userId },
   });
   return NextResponse.json(todo, { status: 201 });
 }

@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/jwt";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-  if (session) redirect("/todos");
+  const userId = await getSessionUserId();
+  if (userId) redirect("/todos");
   redirect("/login");
 }

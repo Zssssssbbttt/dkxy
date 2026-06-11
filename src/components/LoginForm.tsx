@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -16,16 +15,23 @@ export default function LoginForm() {
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const res = await signIn("credentials", {
-      username: form.get("username") as string,
-      password: form.get("password") as string,
-      redirect: false,
+    const username = form.get("username") as string;
+    const password = form.get("password") as string;
+
+    const csrfRes = await fetch("/api/auth/csrf");
+    const { csrfToken } = await csrfRes.json();
+
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, csrfToken }),
     });
 
     setLoading(false);
 
-    if (res?.error) {
-      setError("用户名或密码错误");
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || "用户名或密码错误");
       return;
     }
 

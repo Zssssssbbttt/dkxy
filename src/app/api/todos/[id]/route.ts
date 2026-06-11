@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
 import { todoUpdateSchema } from "@/lib/validations";
 
@@ -8,13 +7,13 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "未登录" }, { status: 401 });
   }
 
   const todo = await prisma.todo.findUnique({ where: { id: params.id } });
-  if (!todo || todo.userId !== session.user.id) {
+  if (!todo || todo.userId !== userId) {
     return NextResponse.json({ error: "未找到" }, { status: 404 });
   }
 
@@ -35,13 +34,13 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "未登录" }, { status: 401 });
   }
 
   const todo = await prisma.todo.findUnique({ where: { id: params.id } });
-  if (!todo || todo.userId !== session.user.id) {
+  if (!todo || todo.userId !== userId) {
     return NextResponse.json({ error: "未找到" }, { status: 404 });
   }
 

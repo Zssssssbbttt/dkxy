@@ -1,5 +1,7 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/jwt";
+import { db } from "@/lib/drizzle";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { prisma } from "@/lib/prisma";
 import type { Todo } from "@prisma/client";
 import TodoPageClient from "./TodoPageClient";
@@ -15,16 +17,20 @@ function serialize(todos: Todo[]) {
 }
 
 export default async function TodosPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return null;
+  const userId = await getSessionUserId();
+  if (!userId) return null;
+
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, Number(userId)),
+  });
 
   const [pendingTodos, doneTodos] = await Promise.all([
     prisma.todo.findMany({
-      where: { userId: session.user.id, completed: false },
+      where: { userId, completed: false },
       orderBy: { createdAt: "desc" },
     }),
     prisma.todo.findMany({
-      where: { userId: session.user.id, completed: true },
+      where: { userId, completed: true },
       orderBy: { updatedAt: "desc" },
     }),
   ]);
@@ -34,7 +40,7 @@ export default async function TodosPage() {
     <TodoPageClient
       initialPending={serialize(pendingTodos)}
       initialDone={serialize(doneTodos)}
-      username={session.user.name || ""}
+      username={user?.username || ""}
     />
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useCallback, useState } from "react";
 import AddTodoForm from "@/components/AddTodoForm";
 import TodoList from "@/components/TodoList";
@@ -37,7 +36,13 @@ export default function TodoPageClient({
   }, [router]);
   
   async function handleLogout() {
-    await signOut({ redirect: false });
+    const csrfRes = await fetch("/api/auth/csrf");
+    const { csrfToken } = await csrfRes.json();
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ csrfToken }),
+    });
     router.push("/login");
   }
 
