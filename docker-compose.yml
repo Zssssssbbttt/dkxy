@@ -29,12 +29,10 @@ services:
     environment:
       NODE_ENV: production
       AUTH_SECRET: super-secret-key-change-in-production
-      DATABASE_URL: postgresql://postgres:mysecretpassword@db:5432/todoapp?schema=public
+      DATABASE_URL_POSTGRES: postgresql://postgres:mysecretpassword@db:5432/todoapp?schema=public
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./prisma:/app/prisma  # 可选：挂载 prisma 目录用于迁移
 
 volumes:
   postgres_data:
