@@ -5,6 +5,7 @@
   "scripts": {
     "db:start": "scripts\\start-db.bat",
     "db:stop": "scripts\\stop-db.bat",
+    "db:seed": "tsx --env-file=.env scripts/seed.ts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

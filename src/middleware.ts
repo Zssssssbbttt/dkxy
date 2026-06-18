@@ -7,7 +7,7 @@ const SECRET = new TextEncoder().encode(
 );
 const COOKIE_NAME = "session";
 
-const PROTECTED = ["/todos", "/api/todos"];
+const PROTECTED = ["/dashboard", "/api/admin"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -29,5 +29,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/todos", "/api/todos/:path*"],
+  matcher: ["/dashboard", "/api/admin/:path*"],
 };

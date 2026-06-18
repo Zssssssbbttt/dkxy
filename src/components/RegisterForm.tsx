@@ -15,13 +15,15 @@ export default function RegisterForm() {
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const username = form.get("username") as string;
+    const phone = form.get("phone") as string;
     const password = form.get("password") as string;
+    const name = form.get("name") as string;
+    const employeeId = form.get("employeeId") as string;
 
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ phone, password, name, employeeId }),
     });
 
     setLoading(false);
@@ -44,10 +46,32 @@ export default function RegisterForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              用户名
+              姓名
             </label>
             <input
-              name="username"
+              name="name"
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              员工编号
+            </label>
+            <input
+              name="employeeId"
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              手机号
+            </label>
+            <input
+              name="phone"
               type="text"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
