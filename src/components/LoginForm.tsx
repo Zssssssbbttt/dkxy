@@ -38,7 +38,7 @@ export default function LoginForm() {
     const data = await res.json();
     localStorage.setItem("user", JSON.stringify(data.user));
 
-    router.push("/todos");
+    router.push("/");
     router.refresh();
   }
 

@@ -9,7 +9,7 @@ const geistSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Todo App - 待办事项",
+  title: "企业管理系统",
   description: "简单的待办事项管理应用",
 };
 

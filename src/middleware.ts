@@ -7,13 +7,23 @@ const SECRET = new TextEncoder().encode(
 );
 const COOKIE_NAME = "session";
 
-const PROTECTED = ["/dashboard", "/api/admin"];
+const PUBLIC = ["/login", "/register", "/api/auth", "/api/register"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
-  if (!isProtected) return NextResponse.next();
+  if (PUBLIC.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
+
+  // 静态资源不需要保护
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
 
   const token = request.cookies.get(COOKIE_NAME)?.value;
   if (!token) {
@@ -29,5 +39,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/api/admin/:path*"],
+  matcher: ["/((?!_next|favicon|.*\\.).*)"],
 };
