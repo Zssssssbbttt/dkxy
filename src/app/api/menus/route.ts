@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/drizzle";
 import { menus } from "@/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { asc } from "drizzle-orm";
 import { getSessionUser } from "@/lib/jwt";
 
 interface MenuTree {
   id: string;
   name: string;
+  nameEn: string | null;
+  code: string | null;
+  type: "menu" | "button";
   path: string | null;
   icon: string | null;
   children: MenuTree[];
@@ -22,26 +25,35 @@ function buildTree(
     .map((m) => ({
       id: m.id,
       name: m.name,
+      nameEn: m.nameEn ?? null,
+      code: m.code ?? null,
+      type: m.type as "menu" | "button",
       path: m.path ?? null,
       icon: m.icon ?? null,
       children: buildTree(list, m.id),
     }));
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "未登录" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(req.url);
+  const flat = searchParams.get("flat") === "true";
+
   const list = await db
     .select()
     .from(menus)
-    .where(eq(menus.status, "active"))
     .orderBy(asc(menus.sort));
 
-  const tree = buildTree(list, null);
+  if (flat) {
+    return NextResponse.json(list);
+  }
 
+  const activeList = list.filter((m) => m.status === "active");
+  const tree = buildTree(activeList, null);
   return NextResponse.json(tree);
 }
 
@@ -52,16 +64,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "无权限" }, { status: 403 });
   }
 
-  const { name, path, icon, parentId, sort } = await req.json();
+  const { name, nameEn, code, type, path, icon, parentId, sort } =
+    await req.json();
 
-  if (!name) {
-    return NextResponse.json({ error: "菜单名称不能为空" }, { status: 400 });
+  if (!name || !code || !type) {
+    return NextResponse.json(
+      { error: "菜单名称、编号、类型不能为空" },
+      { status: 400 }
+    );
   }
 
   const [menu] = await db
     .insert(menus)
     .values({
       name,
+      nameEn: nameEn || null,
+      code,
+      type,
       path: path || null,
       icon: icon || null,
       parentId: parentId || null,

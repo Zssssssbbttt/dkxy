@@ -8,6 +8,7 @@ interface MenuItem {
   name: string;
   path: string | null;
   icon: string | null;
+  type: "menu" | "button";
   children: MenuItem[];
 }
 
@@ -53,6 +54,7 @@ export default function Sidebar() {
 
   const handleChildClick = useCallback(
     (menu: MenuItem) => {
+      if (menu.type === "button") return;
       setExpanded((prev) => {
         const next = new Set(prev);
         if (next.has(menu.id)) next.delete(menu.id);

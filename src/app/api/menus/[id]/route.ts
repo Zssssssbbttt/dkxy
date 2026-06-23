@@ -21,7 +21,8 @@ export async function PUT(
     return NextResponse.json({ error: "菜单不存在" }, { status: 404 });
   }
 
-  const { name, path, icon, parentId, sort, status } = await req.json();
+  const { name, nameEn, code, type, path, icon, parentId, sort, status } =
+    await req.json();
 
   if (parentId === params.id) {
     return NextResponse.json({ error: "上级菜单不能是自己" }, { status: 400 });
@@ -31,6 +32,9 @@ export async function PUT(
     .update(menus)
     .set({
       name: name ?? menu.name,
+      nameEn: nameEn !== undefined ? nameEn : menu.nameEn,
+      code: code ?? menu.code,
+      type: type ?? menu.type,
       path: path !== undefined ? path : menu.path,
       icon: icon !== undefined ? icon : menu.icon,
       parentId: parentId !== undefined ? parentId : menu.parentId,
@@ -60,12 +64,14 @@ export async function DELETE(
     return NextResponse.json({ error: "菜单不存在" }, { status: 404 });
   }
 
-  // 检查是否有子菜单
   const child = await db.query.menus.findFirst({
     where: eq(menus.parentId, params.id),
   });
   if (child) {
-    return NextResponse.json({ error: "该菜单下存在子菜单，无法删除" }, { status: 400 });
+    return NextResponse.json(
+      { error: "该菜单下存在子菜单，无法删除" },
+      { status: 400 }
+    );
   }
 
   await db.delete(menus).where(eq(menus.id, params.id));

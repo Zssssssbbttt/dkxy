@@ -51,7 +51,7 @@ async function seed() {
   } else {
     const [admin] = await db
       .insert(menus)
-      .values({ name: "后台管理", sort: "1" })
+      .values({ name: "后台管理", sort: "1", type: "menu" })
       .returning();
 
     await db.insert(menus).values({
@@ -59,6 +59,7 @@ async function seed() {
       path: "/admin/menus",
       parentId: admin.id,
       sort: "1",
+      type: "menu",
     });
 
     console.log("初始菜单创建成功");
