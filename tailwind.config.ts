@@ -9,8 +9,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        brand: "#2853e0",
+        "bg-primary": "#fdfdfd",
+        "text-primary": "#333333",
+        "text-secondary": "#9ba6cc",
+        "border-light": "#d6e0ff",
+        "required": "#f56c6c",
+      },
+      fontSize: {
+        xs: "12px",
+        sm: "12px",
+        base: "12px",
+        lg: "14px",
+        xl: "16px",
+      },
+      borderRadius: {
+        card: "4px",
+        modal: "12px",
       },
     },
   },

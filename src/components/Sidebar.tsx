@@ -169,11 +169,11 @@ function MenuTree({
         }`}
         style={{ paddingLeft: `${12 + depth * 16}px` }}
       >
-        {hasChildren && (
-          <span className="text-xs">{isExpanded ? "▼" : "▶"}</span>
-        )}
         <span>{menu.icon || "📄"}</span>
-        <span className="truncate">{menu.name}</span>
+        <span className="truncate flex-1">{menu.name}</span>
+        <span className="text-xs text-gray-400 w-4 text-right">
+          {hasChildren ? (isExpanded ? "▼" : "▶") : ""}
+        </span>
       </button>
       {isExpanded &&
         hasChildren &&

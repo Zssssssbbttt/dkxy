@@ -6,3 +6,6 @@ export type { Department, NewDepartment } from "./departments";
 
 export { menus, menuTypeEnum } from "./menus";
 export type { Menu, NewMenu } from "./menus";
+
+export { employeeProfiles } from "./employee-profiles";
+export type { EmployeeProfile, NewEmployeeProfile } from "./employee-profiles";
