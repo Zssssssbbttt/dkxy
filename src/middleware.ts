@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
   }
 }
 
+// 限制访问路径 如果不定义 则所有的请求路径都会通过中间件
 export const config = {
   matcher: ["/((?!_next|favicon|.*\\.).*)"],
 };

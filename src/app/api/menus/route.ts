@@ -15,6 +15,14 @@ interface MenuTree {
   children: MenuTree[];
 }
 
+function resolvePath(m: typeof menus.$inferSelect): string | null {
+  if (m.path) return m.path;
+  if (m.code) {
+    return m.code.startsWith("/") ? m.code : `/${m.code}`;
+  }
+  return null;
+}
+
 function buildTree(
   list: typeof menus.$inferSelect[],
   parentId: string | null
@@ -28,7 +36,7 @@ function buildTree(
       nameEn: m.nameEn ?? null,
       code: m.code ?? null,
       type: m.type as "menu" | "button",
-      path: m.path ?? null,
+      path: resolvePath(m),
       icon: m.icon ?? null,
       children: buildTree(list, m.id),
     }));
