@@ -9,6 +9,7 @@ export async function PUT(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+
   const user = await getSessionUser();
   if (!user || user.role !== "super_admin") {
     return NextResponse.json({ error: "无权限" }, { status: 403 });
@@ -21,12 +22,20 @@ export async function PUT(
     return NextResponse.json({ error: "菜单不存在" }, { status: 404 });
   }
 
+  console.log('修改菜单',menu)
+
   const { name, nameEn, code, type, path, icon, parentId, sort, status } =
     await req.json();
+
+  console.log('父级id',name, nameEn, code, type, path, icon, parentId, sort, status )
 
   if (parentId === params.id) {
     return NextResponse.json({ error: "上级菜单不能是自己" }, { status: 400 });
   }
+
+
+ const  parentId111=parentId !== undefined ? (parentId || null) : menu.parentId
+    console.log('修改后',parentId111)
 
   const [updated] = await db
     .update(menus)
@@ -37,7 +46,7 @@ export async function PUT(
       type: type ?? menu.type,
       path: path !== undefined ? path : menu.path,
       icon: icon !== undefined ? icon : menu.icon,
-      parentId: parentId !== undefined ? parentId : menu.parentId,
+      parentId: parentId !== undefined ? (parentId || null) : menu.parentId,
       sort: sort ?? menu.sort,
       status: status ?? menu.status,
     })

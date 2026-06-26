@@ -12,6 +12,8 @@ interface MenuTree {
   type: "menu" | "button";
   path: string | null;
   icon: string | null;
+  parentId: string | null;
+  sort: string;
   children: MenuTree[];
 }
 
@@ -38,6 +40,8 @@ function buildTree(
       type: m.type as "menu" | "button",
       path: resolvePath(m),
       icon: m.icon ?? null,
+      parentId: m.parentId ?? null,
+      sort: m.sort,
       children: buildTree(list, m.id),
     }));
 }

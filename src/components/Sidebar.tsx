@@ -61,6 +61,8 @@ export default function Sidebar() {
         else next.add(menu.id);
         return next;
       });
+      // 有子菜单的不跳转，只展开/收起
+      if (menu.children.length > 0) return;
       if (menu.path) router.push(menu.path);
     },
     [router]
@@ -72,10 +74,10 @@ export default function Sidebar() {
   // 收起状态：只显示展开按钮
   if (collapsed) {
     return (
-      <aside className="w-12 bg-gray-50 border-r border-gray-200 flex flex-col items-center pt-2 shrink-0">
+      <aside className="w-12 bg-gray-50 border-r border-gray-200 flex flex-col items-center pt-2 shrink-0" style={{ backgroundColor: "#2853e0" }}>
         <button
           onClick={() => setCollapsed(false)}
-          className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+          className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 rounded"
           title="展开菜单"
         >
           ▶
@@ -85,13 +87,13 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="flex bg-gray-50 border-r border-gray-200 shrink-0">
+    <aside className="flex bg-gray-50 border-r border-gray-200 shrink-0" style={{ backgroundColor: "#2853e0" }}>
       {/* 一级菜单列 */}
-      <div className="w-16 flex flex-col items-center shrink-0 border-r border-gray-200">
+      <div className="w-20 flex flex-col items-center shrink-0 border-r border-gray-200" style={{ borderColor: "rgba(255,255,255,0.2)" }}>
         {/* 收起按钮 - 顶部 */}
         <button
           onClick={() => setCollapsed(true)}
-          className="w-10 h-10 mt-2 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+          className="w-10 h-10 mt-2 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 rounded"
           title="收起菜单"
         >
           ◀
@@ -105,14 +107,14 @@ export default function Sidebar() {
               onClick={() => handleFirstClick(menu)}
               className={`w-12 h-12 flex flex-col items-center justify-center rounded-lg text-xs transition-colors ${
                 activeFirst === menu.id
-                  ? "bg-blue-100 text-blue-700"
-                  : "text-gray-500 hover:bg-gray-100"
+                  ? "bg-white/20 text-white"
+                  : "text-white/70 hover:bg-white/10"
               }`}
               title={menu.name}
             >
               <span className="text-lg">{menu.icon || "📁"}</span>
-              <span className="truncate w-full text-center">
-                {menu.name.slice(0, 2)}
+              <span className="truncate w-full text-center text-[10px]">
+                {menu.name}
               </span>
             </button>
           ))}
@@ -121,8 +123,8 @@ export default function Sidebar() {
 
       {/* 二级菜单列 - 仅当一级菜单有子菜单时才显示 */}
       {showSecondLevel && (
-        <div className="w-44 overflow-y-auto py-2">
-          <div className="px-3 py-1 text-xs font-medium text-gray-400 uppercase">
+        <div className="w-44 overflow-y-auto py-2" style={{ backgroundColor: "#1e3fa0" }}>
+          <div className="px-3 py-1 text-xs font-medium uppercase text-white/60">
             {activeMenu!.name}
           </div>
           {activeMenu!.children.map((child) => (
@@ -164,14 +166,14 @@ function MenuTree({
         onClick={() => onToggle(menu)}
         className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
           isActive
-            ? "bg-blue-100 text-blue-700"
-            : "text-gray-600 hover:bg-gray-100"
+            ? "bg-white/10 text-white"
+            : "text-white/70 hover:bg-white/5"
         }`}
         style={{ paddingLeft: `${12 + depth * 16}px` }}
       >
         <span>{menu.icon || "📄"}</span>
         <span className="truncate flex-1">{menu.name}</span>
-        <span className="text-xs text-gray-400 w-4 text-right">
+        <span className="text-xs text-white/40 w-4 text-right">
           {hasChildren ? (isExpanded ? "▼" : "▶") : ""}
         </span>
       </button>
