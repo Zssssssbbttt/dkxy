@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { setUserInfo } from "@/contexts/UserContext";
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -36,7 +37,7 @@ export default function LoginForm() {
     }
 
     const data = await res.json();
-    localStorage.setItem("user", JSON.stringify(data.user));
+    setUserInfo(data.user);
 
     router.push("/");
     router.refresh();

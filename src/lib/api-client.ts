@@ -1,4 +1,6 @@
-export async function apiClient(url: string, options?: RequestInit) {
+import { clearUserInfo } from "@/contexts/UserContext";
+
+async function request(url: string, options?: RequestInit) {
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -7,27 +9,38 @@ export async function apiClient(url: string, options?: RequestInit) {
     },
   });
 
+  if (res.status === 401) {
+    clearUserInfo();
+    window.location.href = "/login";
+    throw new Error("未登录");
+  }
+
+  if (res.status === 403) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "无权限");
+  }
+
   return res;
 }
 
 export async function apiGet(url: string) {
-  return apiClient(url);
+  return request(url);
 }
 
 export async function apiPost(url: string, body: unknown) {
-  return apiClient(url, {
+  return request(url, {
     method: "POST",
     body: JSON.stringify(body),
   });
 }
 
 export async function apiPut(url: string, body: unknown) {
-  return apiClient(url, {
+  return request(url, {
     method: "PUT",
     body: JSON.stringify(body),
   });
 }
 
 export async function apiDelete(url: string) {
-  return apiClient(url, { method: "DELETE" });
+  return request(url, { method: "DELETE" });
 }

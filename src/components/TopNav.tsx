@@ -1,23 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-interface User {
-  id: string;
-  name: string;
-  employeeId: string;
-  phone: string;
-  role: string;
-  departmentId: string | null;
-}
+import { useUser } from "@/contexts/UserContext";
 
 export default function TopNav() {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
-  }, []);
+  const user = useUser();
 
   return (
     <header className="h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-4 shrink-0">
