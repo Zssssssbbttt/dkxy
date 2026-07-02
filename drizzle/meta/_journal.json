@@ -43,6 +43,13 @@
       "when": 1782293920417,
       "tag": "0005_fixed_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782978658165,
+      "tag": "0006_peaceful_eternals",
+      "breakpoints": true
     }
   ]
 }

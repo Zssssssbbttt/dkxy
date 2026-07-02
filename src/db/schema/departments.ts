@@ -8,6 +8,8 @@ export const departments = pgTable("departments", {
   parentId: uuid("parent_id"),
   sort: varchar("sort", { length: 10 }).notNull().default("0"),
   status: statusEnum("status").notNull().default("active"),
+  createdBy: uuid("created_by"),
+  remark: varchar("remark", { length: 500 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

@@ -21,7 +21,7 @@ export async function PUT(
     return NextResponse.json({ error: "部门不存在" }, { status: 404 });
   }
 
-  const { name, code, parentId, sort } = await req.json();
+  const { name, code, parentId, sort, remark } = await req.json();
 
   if (code && code !== dept.code) {
     const existing = await db.query.departments.findFirst({
@@ -39,6 +39,7 @@ export async function PUT(
       code: code ?? dept.code,
       parentId: parentId !== undefined ? parentId : dept.parentId,
       sort: sort ?? dept.sort,
+      remark: remark !== undefined ? remark : dept.remark,
     })
     .where(eq(departments.id, params.id))
     .returning();
